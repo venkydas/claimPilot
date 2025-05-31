@@ -33,4 +33,5 @@ Insurance claim Review Agent
 ## Improvements
 
 - We can use tesseract for OCR based text parsing from these pdf's as they are looking like scanned images.
+- Customizing prompts to align with specific requirements and use cases.
 - To classify the document, we can send the first page to determine, this can be implemented after looking at larger samples docs.
