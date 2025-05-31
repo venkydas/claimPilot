@@ -14,9 +14,8 @@ class ClaimProcessingGraph:
         self.validator = ValidationAgent()
 
     async def run(self, files):
-        documents = []
         tasks = []
-
+        
         # Step 1: Classify and extract
         for file in files:
             tasks.append(self._process_single(file))

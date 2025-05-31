@@ -1,18 +1,16 @@
+import json
 from .base import BaseAgent
+from .prompts import DISCHARGE_SUMMARY_PROMPT
 
 class DischargeAgent(BaseAgent):
     async def extract(self, text: str) -> dict:
-        prompt = (
+        system_message = """
+            You are a medical documents analyzer, responsible for extracting structured information from discharge summaries.
             """
-            Extract the following fields from the discharge summary (as JSON):
-            patient_name, diagnosis, admission_date, discharge_date.
-            Return ONLY a valid JSON object with those keys. Example: 
-            {"patient_name": "...", "diagnosis": "...", "admission_date": "YYYY-MM-DD", "discharge_date": "YYYY-MM-DD"}
-            """
+        
+        prompt_text = DISCHARGE_SUMMARY_PROMPT.format(content=text)
+        result = await self.llm_call(system_message, prompt_text)
 
-        )
-        result = await self.llm_call(prompt, text)
-        import json
         try:
             result = json.loads(result)
         except json.JSONDecodeError:

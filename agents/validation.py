@@ -1,13 +1,13 @@
+import json
 from .base import BaseAgent
+from .prompts import VALIDATION_PROMPT
 
 class ValidationAgent(BaseAgent):
     async def validate(self, docs: list) -> dict:
-        prompt = (
-            "Given these structured claim documents ( array of jsons ), identify missing required document types "
-            "(must have bill and discharge_summary), and any discrepancies in patient or date fields. "
-            "Return a JSON object with two arrays: missing_documents, discrepancies."
-        )
-        import json
+        system_message ="You are a medical document validator, responsible for checking the consistency and completeness of medical documents."
+        
         docs_json = json.dumps(docs)
-        result = await self.llm_call(prompt, docs_json)
+        prompt_text = VALIDATION_PROMPT.format(content=docs_json)
+        result = await self.llm_call(system_message, prompt_text)
+        
         return json.loads(result)

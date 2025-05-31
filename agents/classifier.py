@@ -1,14 +1,24 @@
 from .base import BaseAgent
+from .prompts import DOCUMENT_CLASSIFICATION_PROMPT
 
 class ClassificationAgent(BaseAgent):
-    async def classify(self, filename: str, text: str) -> str:
-        prompt = (
-            "You are a medical document classifier. "
-            "Given the filename and content, output ONLY ONE of these types: bill, discharge_summary, id_card, or unknown."
+    def __init__(self):
+        super().__init__()
+        self.name = "ClassificationAgent"
+        self.description = (
+            "Classifies medical documents into bill, discharge_summary, id_card, or unknown."
         )
-        full_text = f"Filename: {filename}\nContent: {text}"
-        doc_type = await self.llm_call(prompt, full_text)
+
+    async def classify(self, filename: str, text: str) -> str:
+        system_message = (
+            "You are a medical document classifier, responsible for determining the type of medical document "
+        )
+
+        prompt_text = DOCUMENT_CLASSIFICATION_PROMPT.format( file_name=filename, content=text)
+        doc_type = await self.llm_call(system_message, prompt_text)
         doc_type = doc_type.lower().strip()
+
         if doc_type not in {"bill", "discharge_summary", "id_card"}:
             doc_type = "unknown"
+
         return doc_type
